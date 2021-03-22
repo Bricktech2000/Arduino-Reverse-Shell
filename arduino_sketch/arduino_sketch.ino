@@ -94,7 +94,7 @@ void setup(){
   //for some reason we can still type in a hidden Powershell window...
   smartPrint(STR0, 0);
   printCtrlShift('\n');
-  delay(1000);
+  delay(1500);
   Keyboard.write(KEY_LEFT_ARROW);
   delay(100);
   Keyboard.write('\n');
