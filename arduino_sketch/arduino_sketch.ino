@@ -50,6 +50,7 @@ void smartPrint(const unsigned char string[], int keyboard){
     else if(string[c] == '{' && keyboard == 0) printCtrlAlt(52);     // `
     else if(string[c] == '}' && keyboard == 0) printCtrlAlt(49);     // <
     else Keyboard.write(toPrint);
+    delay(5);
   }
 }
 //a function to send Ctrl + Alt + key
